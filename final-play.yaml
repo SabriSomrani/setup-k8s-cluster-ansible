@@ -1,0 +1,8 @@
+---
+- import_playbook: system_requirement.yaml
+- import_playbook: setup-docker.yaml
+- import_playbook: setup-k8s-packages.yaml
+- import_playbook: init-master.yaml
+- import_playbook: node-join.yaml
+- import_playbook: kube-bash-completion.yaml
+

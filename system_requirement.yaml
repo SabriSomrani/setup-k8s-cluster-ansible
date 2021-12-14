@@ -1,0 +1,70 @@
+--- 
+- name: configure system requirement for setup kubernetes Cluster
+  hosts: k8s
+  tasks:
+  - name: disable swap
+    lineinfile:
+      path: /etc/fstab
+      regexp: "swap"
+      state: absent
+  - name: Make  direcotry
+    file:
+      path: /etc/modules-load.d
+      state: directory
+  - name: Make sure that the br_netfilter module is loaded
+    copy:
+      content: "br_netfilter"
+      dest: /etc/modules-load.d/k8s.conf
+  - name: set net.bridge.bridge-nf-call-iptables
+    copy:
+      content: "net.bridge.bridge-nf-call-ip6tables = 1\nnet.bridge.bridge-nf-call-iptables = 1"
+      dest: /etc/sysctl.d/k8s.conf
+  - name: make selinux mode permissive
+    selinux:
+     policy: targeted
+     state: permissive
+  - name: using block
+    block:
+    - name: open port kubernetes API server 
+      firewalld:
+        port: 6443/tcp
+        state: enabled
+        permanent: yes
+        immediate: yes
+    - name: open port etcd server client API
+      firewalld:
+        port: 2379-2380/tcp
+        state: enabled
+        permanent: yes
+    - name: open port kube-scheduler
+      firewalld:
+        port: 10251/tcp
+        state: enabled
+        permanent: yes
+        immediate: yes
+    - name: open port kube-controller-manager
+      firewalld:
+        port: 10252/tcp
+        state: enabled
+        permanent: yes
+        immediate: yes
+    when: "'controller' in group_names"
+  - name: open port kubelet API
+    firewalld:
+      port: 10250/tcp
+      state: enabled
+      permanent: yes
+      immediate: yes
+  - name: open port NodePort Services†
+    firewalld:
+      port: 30000-32767/tcp
+      state: enabled
+      permanent: yes
+      immediate: yes
+    when: "'worker' in group_names"
+
+
+
+
+    
+      

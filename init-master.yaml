@@ -1,0 +1,19 @@
+---
+- name: initialize control plane node
+  hosts: master-k8s
+  tasks:
+  - name: use kubeadm join command
+    shell: kubeadm init --pod-network-cidr=10.244.0.0/16
+  - name: create .kube directory
+    file:
+      path: $HOME/.kube
+      state: directory
+      mode: 0755 
+  - name: copy admin.conf to user
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: /root/.kube/config
+      remote_src: yes
+  - name: install CNI
+    shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+

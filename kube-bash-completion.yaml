@@ -1,0 +1,15 @@
+---
+- name: add source bash completion
+  hosts: all
+  tasks:
+  - name: install bash-completion packages
+    yum:
+      name: bash-completion
+  - name: add source kubectl completion bash to bashrc
+    lineinfile:
+      path: ~/.bashrc
+      line: "source <(kubectl completion bash)"
+  - name: add source kubeadm completion bash
+    lineinfile:
+      path: ~/.bashrc
+      line: "source <(kubeadm completion bash)"

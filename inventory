@@ -1,0 +1,15 @@
+
+[k8s]
+master-k8s
+node01-k8s
+node02-k8s
+
+[controller]
+master-k8s
+
+[worker]
+node01-k8s
+node02-k8s
+
+
+
